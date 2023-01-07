@@ -1,7 +1,24 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Video, VideoProxy
+from .models import VideoAllProxy, VideoPublishedProxy
 
-admin.site.register(Video)
-admin.site.register(VideoProxy)
+class VideoAdmin(admin.ModelAdmin):
+  list_display = ['title', 'video_id']
+  search_fields = ['title']
+  # list_filter = ['video_id']
+  class Meta:
+    model = VideoAllProxy
+
+class VideoProxyAdmin(admin.ModelAdmin):
+  list_display = ['title', 'video_id']
+  search_fields = ['title']
+  # list_filter = ['video_id']
+  class Meta:
+    model = VideoPublishedProxy
+
+  def get_queryset(self, request):
+    return VideoPublishedProxy.objects.filter(active=True)
+
+admin.site.register(VideoAllProxy, VideoAdmin)
+admin.site.register(VideoPublishedProxy, VideoProxyAdmin)
